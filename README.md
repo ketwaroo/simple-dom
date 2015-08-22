@@ -1,0 +1,1 @@
+Straight up fork of https://code.google.com/p/simpledom/
