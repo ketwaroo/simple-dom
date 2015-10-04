@@ -65,6 +65,10 @@ function simpledom_load_string($string)
 
 /**
  * @package SimpleDOM
+ * 
+ * @method SimpleDOM appendChild(SimpleDOM $child) Description
+ * @method SimpleDOM removeChild(SimpleDOM $child) Description
+ * @method SimpleDOM replaceChild(SimpleDOM $oldNode, SimpleDOM $newNode) Description
  */
 class SimpleDOM extends SimpleXMLElement
 {
@@ -791,6 +795,8 @@ class SimpleDOM extends SimpleXMLElement
         $xml = dom_import_simplexml(new SimpleXMLElement(
             $this->asXML()
         ));
+        
+        $xml->formatOutput = true;
 
         $xsl = new DOMDocument;
         $xsl->loadXML(
