@@ -32,14 +32,12 @@
 /**
  * Alias for simplexml_load_file()
  *
- * @return	SimpleDOM
+ * @return static
  */
-function simpledom_load_file($filename)
-{
+function simpledom_load_file($filename) {
     $args = func_get_args();
 
-    if(isset($args[0]) && !isset($args[1]))
-    {
+    if (isset($args[0]) && !isset($args[1])) {
         $args[1] = 'SimpleDOM';
     }
 
@@ -49,14 +47,12 @@ function simpledom_load_file($filename)
 /**
  * Alias for simplexml_load_string()
  *
- * @return	SimpleDOM
+ * @return static
  */
-function simpledom_load_string($string)
-{
+function simpledom_load_string($string) {
     $args = func_get_args();
 
-    if(isset($args[0]) && !isset($args[1]))
-    {
+    if (isset($args[0]) && !isset($args[1])) {
         $args[1] = 'SimpleDOM';
     }
 
@@ -70,9 +66,7 @@ function simpledom_load_string($string)
  * @method SimpleDOM removeChild(SimpleDOM $child) Description
  * @method SimpleDOM replaceChild(SimpleDOM $oldNode, SimpleDOM $newNode) Description
  */
-class SimpleDOM extends SimpleXMLElement
-{
-
+class SimpleDOM extends SimpleXMLElement {
     //=================================
     // Factories
     //=================================
@@ -83,10 +77,9 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string		$source		HTML source
      * @param	mixed		&$errors	Passed by reference. Will be replaced by an array of
      * 									LibXMLError objects if applicable
-     * @return	SimpleDOM
+     * @return	static
      */
-    static public function loadHTML($source, &$errors = null)
-    {
+    static public function loadHTML($source, &$errors = null) {
         return static::fromHTML('loadHTML', $source, $errors);
     }
 
@@ -96,10 +89,9 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string		$filename	Path/URL to HTML file
      * @param	mixed		&$errors	Passed by reference. Will be replaced by an array of
      * 									LibXMLError objects if applicable
-     * @return	SimpleDOM
+     * @return	static
      */
-    static public function loadHTMLFile($filename, &$errors = null)
-    {
+    static public function loadHTMLFile($filename, &$errors = null) {
         return static::fromHTML('loadHTMLFile', $filename, $errors);
     }
 
@@ -108,79 +100,71 @@ class SimpleDOM extends SimpleXMLElement
     //=================================
 
     /** @ignore * */
-    public function __call($name, $args)
-    {
+    public function __call($name, $args) {
         $passthrough = array(
             // From DOMElement
-            'getAttribute'           => 'method',
-            'getAttributeNS'         => 'method',
-            'getElementsByTagName'   => 'method',
+            'getAttribute' => 'method',
+            'getAttributeNS' => 'method',
+            'getElementsByTagName' => 'method',
             'getElementsByTagNameNS' => 'method',
-            'hasAttribute'           => 'method',
-            'hasAttributeNS'         => 'method',
-            'removeAttribute'        => 'method',
-            'removeAttributeNS'      => 'method',
-            'setAttribute'           => 'method',
-            'setAttributeNS'         => 'method',
+            'hasAttribute' => 'method',
+            'hasAttributeNS' => 'method',
+            'removeAttribute' => 'method',
+            'removeAttributeNS' => 'method',
+            'setAttribute' => 'method',
+            'setAttributeNS' => 'method',
             // From DOMNode
-            'appendChild'        => 'insert',
-            'insertBefore'       => 'insert',
-            'replaceChild'       => 'insert',
-            'cloneNode'          => 'method',
-            'getLineNo'          => 'method',
-            'hasAttributes'      => 'method',
-            'hasChildNodes'      => 'method',
-            'isSameNode'         => 'method',
+            'appendChild' => 'insert',
+            'insertBefore' => 'insert',
+            'replaceChild' => 'insert',
+            'cloneNode' => 'method',
+            'getLineNo' => 'method',
+            'hasAttributes' => 'method',
+            'hasChildNodes' => 'method',
+            'isSameNode' => 'method',
             'lookupNamespaceURI' => 'method',
-            'lookupPrefix'       => 'method',
-            'normalize'          => 'method',
-            'removeChild'        => 'method',
-            'nodeName'        => 'property',
-            'nodeValue'       => 'property',
-            'nodeType'        => 'property',
-            'parentNode'      => 'property',
-            'childNodes'      => 'property',
-            'firstChild'      => 'property',
-            'lastChild'       => 'property',
+            'lookupPrefix' => 'method',
+            'normalize' => 'method',
+            'removeChild' => 'method',
+            'nodeName' => 'property',
+            'nodeValue' => 'property',
+            'nodeType' => 'property',
+            'parentNode' => 'property',
+            'childNodes' => 'property',
+            'firstChild' => 'property',
+            'lastChild' => 'property',
             'previousSibling' => 'property',
-            'nextSibling'     => 'property',
-            'namespaceURI'    => 'property',
-            'prefix'          => 'property',
-            'localName'       => 'property',
-            'textContent'     => 'property'
+            'nextSibling' => 'property',
+            'namespaceURI' => 'property',
+            'prefix' => 'property',
+            'localName' => 'property',
+            'textContent' => 'property'
         );
 
         $dom = dom_import_simplexml($this);
 
-        if(!isset($passthrough[$name]))
-        {
-            if(method_exists($dom, $name))
-            {
+        if (!isset($passthrough[$name])) {
+            if (method_exists($dom, $name)) {
                 throw new BadMethodCallException('DOM method ' . $name . '() is not supported');
             }
 
-            if(property_exists($dom, $name))
-            {
+            if (property_exists($dom, $name)) {
                 throw new BadMethodCallException('DOM property ' . $name . ' is not supported');
             }
 
             throw new BadMethodCallException('Undefined method ' . get_class($this) . '::' . $name . '()');
         }
 
-        switch($passthrough[$name])
-        {
+        switch ($passthrough[$name]) {
             case 'insert':
-                if(isset($args[0]) && $args[0] instanceof SimpleXMLElement)
-                {
+                if (isset($args[0]) && $args[0] instanceof SimpleXMLElement) {
                     $args[0] = $dom->ownerDocument->importNode(dom_import_simplexml($args[0]), true);
                 }
             // no break; here
 
             case 'method':
-                foreach($args as &$arg)
-                {
-                    if($arg instanceof SimpleXMLElement)
-                    {
+                foreach ($args as &$arg) {
+                    if ($arg instanceof SimpleXMLElement) {
                         $arg = dom_import_simplexml($arg);
                     }
                 }
@@ -194,15 +178,12 @@ class SimpleDOM extends SimpleXMLElement
                 break;
         }
 
-        if($ret instanceof DOMText)
-        {
+        if ($ret instanceof DOMText) {
             return $ret->textContent;
         }
 
-        if($ret instanceof DOMNode)
-        {
-            if($ret instanceof DOMAttr)
-            {
+        if ($ret instanceof DOMNode) {
+            if ($ret instanceof DOMAttr) {
                 /**
                  * Methods that affect attributes can't return the attributes themselves. Instead,
                  * we make them chainable
@@ -213,15 +194,13 @@ class SimpleDOM extends SimpleXMLElement
             return simplexml_import_dom($ret, get_class($this));
         }
 
-        if($ret instanceof DOMNodeList)
-        {
+        if ($ret instanceof DOMNodeList) {
             $class = get_class($this);
-            $list  = array();
-            $i     = -1;
+            $list = array();
+            $i = -1;
 
-            while(++$i < $ret->length)
-            {
-                $node     = $ret->item($i);
+            while (++$i < $ret->length) {
+                $node = $ret->item($i);
                 $list[$i] = ($node instanceof DOMText) ? $node->textContent : simplexml_import_dom($node, $class);
             }
 
@@ -244,11 +223,10 @@ class SimpleDOM extends SimpleXMLElement
      * </code>
      *
      * @param	SimpleXMLElement	$new	New node
-     * @return	SimpleDOM					The inserted node
+     * @return static					The inserted node
      */
-    public function insertBeforeSelf(SimpleXMLElement $new)
-    {
-        $tmp  = dom_import_simplexml($this);
+    public function insertBeforeSelf(SimpleXMLElement $new) {
+        $tmp = dom_import_simplexml($this);
         $node = $tmp->ownerDocument->importNode(dom_import_simplexml($new), true);
 
         return simplexml_import_dom($this->insertNode($tmp, $node, 'before'), get_class($this));
@@ -263,11 +241,10 @@ class SimpleDOM extends SimpleXMLElement
      * </code>
      *
      * @param	SimpleXMLElement	$new	New node
-     * @return	SimpleDOM					The inserted node
+     * @return static					The inserted node
      */
-    public function insertAfterSelf(SimpleXMLElement $new)
-    {
-        $tmp  = dom_import_simplexml($this);
+    public function insertAfterSelf(SimpleXMLElement $new) {
+        $tmp = dom_import_simplexml($this);
         $node = $tmp->ownerDocument->importNode(dom_import_simplexml($new), true);
 
         return simplexml_import_dom($this->insertNode($tmp, $node, 'after'), get_class($this));
@@ -283,12 +260,10 @@ class SimpleDOM extends SimpleXMLElement
      *
      * @return	void
      */
-    public function deleteSelf()
-    {
+    public function deleteSelf() {
         $tmp = dom_import_simplexml($this);
 
-        if($tmp->isSameNode($tmp->ownerDocument->documentElement))
-        {
+        if ($tmp->isSameNode($tmp->ownerDocument->documentElement)) {
             throw new BadMethodCallException('deleteSelf() cannot be used to delete the root node');
         }
 
@@ -303,14 +278,12 @@ class SimpleDOM extends SimpleXMLElement
      * $node->parentNode()->removeChild($node);
      * </code>
      *
-     * @return	SimpleDOM		The removed node
+     * @return static		The removed node
      */
-    public function removeSelf()
-    {
+    public function removeSelf() {
         $tmp = dom_import_simplexml($this);
 
-        if($tmp->isSameNode($tmp->ownerDocument->documentElement))
-        {
+        if ($tmp->isSameNode($tmp->ownerDocument->documentElement)) {
             throw new BadMethodCallException('removeSelf() cannot be used to remove the root node');
         }
 
@@ -327,10 +300,9 @@ class SimpleDOM extends SimpleXMLElement
      * </code>
      *
      * @param	SimpleXMLElement	$new	New node
-     * @return	SimpleDOM					Replaced node on success
+     * @return static					Replaced node on success
      */
-    public function replaceSelf(SimpleXMLElement $new)
-    {
+    public function replaceSelf(SimpleXMLElement $new) {
         $old = dom_import_simplexml($this);
         $new = $old->ownerDocument->importNode(dom_import_simplexml($new), true);
 
@@ -344,27 +316,22 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string	$xpath	XPath expression
      * @return	integer			Number of nodes removed
      */
-    public function deleteNodes($xpath)
-    {
-        if(!is_string($xpath))
-        {
+    public function deleteNodes($xpath) {
+        if (!is_string($xpath)) {
             throw new InvalidArgumentException('Argument 1 passed to deleteNodes() must be a string, ' . gettype($xpath) . ' given');
         }
 
         $nodes = $this->_xpath($xpath);
 
-        if(isset($nodes[0]))
-        {
+        if (isset($nodes[0])) {
             $tmp = dom_import_simplexml($nodes[0]);
 
-            if($tmp->isSameNode($tmp->ownerDocument->documentElement))
-            {
+            if ($tmp->isSameNode($tmp->ownerDocument->documentElement)) {
                 unset($nodes[0]);
             }
         }
 
-        foreach($nodes as $node)
-        {
+        foreach ($nodes as $node) {
             $node->deleteSelf();
         }
 
@@ -377,28 +344,23 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string	$xpath	XPath expression
      * @return	array			Array of removed nodes on success or FALSE on failure
      */
-    public function removeNodes($xpath)
-    {
-        if(!is_string($xpath))
-        {
+    public function removeNodes($xpath) {
+        if (!is_string($xpath)) {
             throw new InvalidArgumentException('Argument 1 passed to removeNodes() must be a string, ' . gettype($xpath) . ' given');
         }
 
         $nodes = $this->_xpath($xpath);
 
-        if(isset($nodes[0]))
-        {
+        if (isset($nodes[0])) {
             $tmp = dom_import_simplexml($nodes[0]);
 
-            if($tmp->isSameNode($tmp->ownerDocument->documentElement))
-            {
+            if ($tmp->isSameNode($tmp->ownerDocument->documentElement)) {
                 unset($nodes[0]);
             }
         }
 
         $return = array();
-        foreach($nodes as $node)
-        {
+        foreach ($nodes as $node) {
             $return[] = $node->removeSelf();
         }
 
@@ -412,16 +374,13 @@ class SimpleDOM extends SimpleXMLElement
      * @param	SimpleXMLElement	$new	Replacement node
      * @return	array						Array of replaced nodes on success or FALSE on failure
      */
-    public function replaceNodes($xpath, SimpleXMLElement $new)
-    {
-        if(!is_string($xpath))
-        {
+    public function replaceNodes($xpath, SimpleXMLElement $new) {
+        if (!is_string($xpath)) {
             throw new InvalidArgumentException('Argument 1 passed to replaceNodes() must be a string, ' . gettype($xpath) . ' given');
         }
 
         $nodes = array();
-        foreach($this->_xpath($xpath) as $node)
-        {
+        foreach ($this->_xpath($xpath) as $node) {
             $nodes[] = $node->replaceSelf($new);
         }
 
@@ -434,16 +393,13 @@ class SimpleDOM extends SimpleXMLElement
      * @param	SimpleXMLElement	$src		Source node
      * @param	bool				$overwrite	If TRUE, overwrite existing attributes.
      * 											Otherwise, ignore duplicate attributes
-     * @return	SimpleDOM						Current node
+     * @return static						Current node
      */
-    public function copyAttributesFrom(SimpleXMLElement $src, $overwrite = true)
-    {
+    public function copyAttributesFrom(SimpleXMLElement $src, $overwrite = true) {
         $dom = dom_import_simplexml($this);
 
-        foreach(dom_import_simplexml($src)->attributes as $attr)
-        {
-            if($overwrite || !$dom->hasAttributeNS($attr->namespaceURI, $attr->nodeName))
-            {
+        foreach (dom_import_simplexml($src)->attributes as $attr) {
+            if ($overwrite || !$dom->hasAttributeNS($attr->namespaceURI, $attr->nodeName)) {
                 $dom->setAttributeNS($attr->namespaceURI, $attr->nodeName, $attr->nodeValue);
             }
         }
@@ -459,17 +415,15 @@ class SimpleDOM extends SimpleXMLElement
      *
      * @param	SimpleXMLElement	$src	Source node
      * @param	bool				$deep	If TRUE, clone descendant nodes as well
-     * @return	SimpleDOM					Current node
+     * @return static					Current node
      */
-    public function cloneChildrenFrom(SimpleXMLElement $src, $deep = true)
-    {
+    public function cloneChildrenFrom(SimpleXMLElement $src, $deep = true) {
         $src = dom_import_simplexml($src);
         $dst = dom_import_simplexml($this);
         $doc = $dst->ownerDocument;
 
         $fragment = $doc->createDocumentFragment();
-        foreach($src->childNodes as $child)
-        {
+        foreach ($src->childNodes as $child) {
             $fragment->appendChild($doc->importNode($child->cloneNode($deep), $deep));
         }
         $dst->appendChild($fragment);
@@ -483,10 +437,9 @@ class SimpleDOM extends SimpleXMLElement
      * ATTENTION! using references to the old node will screw up the original document
      *
      * @param	SimpleXMLElement	$dst	Target parent
-     * @return	SimpleDOM					Current node
+     * @return static					Current node
      */
-    public function moveTo(SimpleXMLElement $dst)
-    {
+    public function moveTo(SimpleXMLElement $dst) {
         return simplexml_import_dom(dom_import_simplexml($dst), get_class($this))->appendChild($this->removeSelf());
     }
 
@@ -496,8 +449,7 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string	$xpath	XPath expression
      * @return	mixed			SimpleDOM object if any node was returned, NULL otherwise
      */
-    public function firstOf($xpath)
-    {
+    public function firstOf($xpath) {
         $nodes = $this->xpath($xpath);
         return (isset($nodes[0])) ? $nodes[0] : null;
     }
@@ -512,10 +464,9 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string		$content	CDATA content
      * @param	string		$mode		Where to add this node: 'append' to current node,
      * 									'before' current node or 'after' current node
-     * @return	SimpleDOM				Current node
+     * @return static				Current node
      */
-    public function insertCDATA($content, $mode = 'append')
-    {
+    public function insertCDATA($content, $mode = 'append') {
         $this->insert('CDATASection', $content, $mode);
         return $this;
     }
@@ -526,10 +477,9 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string		$content	Comment content
      * @param	string		$mode		Where to add this node: 'append' to current node,
      * 									'before' current node or 'after' current node
-     * @return	SimpleDOM				Current node
+     * @return static				Current node
      */
-    public function insertComment($content, $mode = 'append')
-    {
+    public function insertComment($content, $mode = 'append') {
         $this->insert('Comment', $content, $mode);
         return $this;
     }
@@ -540,10 +490,9 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string		$content	CDATA content
      * @param	string		$mode		Where to add this node: 'append' to current node,
      * 									'before' current node or 'after' current node
-     * @return	SimpleDOM				Current node
+     * @return static				Current node
      */
-    public function insertText($content, $mode = 'append')
-    {
+    public function insertText($content, $mode = 'append') {
         $this->insert('TextNode', $content, $mode);
         return $this;
     }
@@ -554,11 +503,10 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string		$xml	XML to insert
      * @param	string		$mode	Where to add this tag: 'append' to current node,
      * 								'before' current node or 'after' current node
-     * @return	SimpleDOM			Current node
+     * @return static			Current node
      */
-    public function insertXML($xml, $mode = 'append')
-    {
-        $tmp      = dom_import_simplexml($this);
+    public function insertXML($xml, $mode = 'append') {
+        $tmp = dom_import_simplexml($this);
         $fragment = $tmp->ownerDocument->createDocumentFragment();
 
         /**
@@ -566,8 +514,7 @@ class SimpleDOM extends SimpleXMLElement
          */
         $use_errors = libxml_use_internal_errors(true);
 
-        if(!$fragment->appendXML($xml))
-        {
+        if (!$fragment->appendXML($xml)) {
             libxml_use_internal_errors($use_errors);
             throw new InvalidArgumentException(libxml_get_last_error()->message);
         }
@@ -587,37 +534,28 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string|array	$data		Content of the processing instruction
      * @return	bool						TRUE on success, FALSE on failure
      */
-    public function insertPI($target, $data = null, $mode = 'before')
-    {
+    public function insertPI($target, $data = null, $mode = 'before') {
         $tmp = dom_import_simplexml($this);
         $doc = $tmp->ownerDocument;
 
-        if(isset($data))
-        {
-            if(is_array($data))
-            {
+        if (isset($data)) {
+            if (is_array($data)) {
                 $str = '';
-                foreach($data as $k => $v)
-                {
+                foreach ($data as $k => $v) {
                     $str .= $k . '="' . htmlspecialchars($v) . '" ';
                 }
 
                 $data = substr($str, 0, -1);
-            }
-            else
-            {
+            } else {
                 $data = (string) $data;
             }
 
             $pi = $doc->createProcessingInstruction($target, $data);
-        }
-        else
-        {
+        } else {
             $pi = $doc->createProcessingInstruction($target);
         }
 
-        if($pi !== false)
-        {
+        if ($pi !== false) {
             $this->insertNode($tmp, $pi, $mode);
         }
 
@@ -629,13 +567,11 @@ class SimpleDOM extends SimpleXMLElement
      *
      * @param	array		$attr	Attributes as name => value pairs
      * @param	string		$ns		Namespace for the attributes
-     * @return	SimpleDOM			Current node
+     * @return static			Current node
      */
-    public function setAttributes(array $attr, $ns = null)
-    {
+    public function setAttributes(array $attr, $ns = null) {
         $dom = dom_import_simplexml($this);
-        foreach($attr as $k => $v)
-        {
+        foreach ($attr as $k => $v) {
             $dom->setAttributeNS($ns, $k, $v);
         }
         return $this;
@@ -651,14 +587,12 @@ class SimpleDOM extends SimpleXMLElement
      *
      * @return	string			Content of current node
      */
-    public function innerHTML()
-    {
+    public function innerHTML() {
         $dom = dom_import_simplexml($this);
         $doc = $dom->ownerDocument;
 
         $html = '';
-        foreach($dom->childNodes as $child)
-        {
+        foreach ($dom->childNodes as $child) {
             $html .= ($child instanceof DOMText) ? $child->textContent : $doc->saveXML($child);
         }
 
@@ -670,8 +604,7 @@ class SimpleDOM extends SimpleXMLElement
      *
      * @return	string			Content of current node
      */
-    public function innerXML()
-    {
+    public function innerXML() {
         $xml = $this->outerXML();
         $pos = 1 + strpos($xml, '>');
         $len = strrpos($xml, '<') - $pos;
@@ -685,8 +618,7 @@ class SimpleDOM extends SimpleXMLElement
      *
      * @return	string			Content of current node
      */
-    public function outerXML()
-    {
+    public function outerXML() {
         $dom = dom_import_simplexml($this);
         return $dom->ownerDocument->saveXML($dom);
     }
@@ -699,10 +631,8 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string	$class		Class name
      * @return	array				Array of SimpleDOM nodes
      */
-    public function getElementsByClassName($class)
-    {
-        if(strpos($class, '"') !== false || strpos($class, "'") !== false)
-        {
+    public function getElementsByClassName($class) {
+        if (strpos($class, '"') !== false || strpos($class, "'") !== false) {
             return array();
         }
 
@@ -716,8 +646,7 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string	$class		Class name
      * @return	bool
      */
-    public function hasClass($class)
-    {
+    public function hasClass($class) {
         return in_array($class, explode(' ', $this['class']));
     }
 
@@ -725,16 +654,13 @@ class SimpleDOM extends SimpleXMLElement
      * Add given class to current node
      *
      * @param	string		$class	Class name
-     * @return	SimpleDOM			Current node
+     * @return static			Current node
      */
-    public function addClass($class)
-    {
-        if(!$this->hasClass($class))
-        {
+    public function addClass($class) {
+        if (!$this->hasClass($class)) {
             $current = (string) $this['class'];
 
-            if($current !== '' && substr($current, -1) !== ' ')
-            {
+            if ($current !== '' && substr($current, -1) !== ' ') {
                 $this['class'] .= ' ';
             }
 
@@ -748,12 +674,10 @@ class SimpleDOM extends SimpleXMLElement
      * Remove given class from current node
      *
      * @param	string		$class	Class name
-     * @return	SimpleDOM			Current node
+     * @return static			Current node
      */
-    public function removeClass($class)
-    {
-        while($this->hasClass($class))
-        {
+    public function removeClass($class) {
+        while ($this->hasClass($class)) {
             $this['class'] = substr(str_replace(' ' . $class . ' ', ' ', ' ' . $this['class'] . ' '), 1, -1);
         }
         return $this;
@@ -768,8 +692,7 @@ class SimpleDOM extends SimpleXMLElement
      *
      * @return	DOMElement
      */
-    public function asDOM()
-    {
+    public function asDOM() {
         return dom_import_simplexml($this);
     }
 
@@ -784,8 +707,7 @@ class SimpleDOM extends SimpleXMLElement
      * 								succesfully written or FALSE otherwise. If $filepath isn't set,
      * 								it returns the result as a string
      */
-    public function asPrettyXML($filepath = null)
-    {
+    public function asPrettyXML($filepath = null) {
         /**
          * Dump and reload this node's XML with LIBXML_NOBLANKS.
          *
@@ -793,14 +715,14 @@ class SimpleDOM extends SimpleXMLElement
          * SimpleXMLElement as a source.
          */
         $xml = dom_import_simplexml(new SimpleXMLElement(
-            $this->asXML()
+                        $this->asXML()
         ));
-        
+
         $xml->formatOutput = true;
 
         $xsl = new DOMDocument;
         $xsl->loadXML(
-            '<?xml version="1.0" encoding="utf-8"?>
+                '<?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 	<xsl:output method="xml" indent="yes" />
@@ -826,8 +748,7 @@ class SimpleDOM extends SimpleXMLElement
 
         $result = trim($xslt->transformToXML($xml));
 
-        if(isset($filepath))
-        {
+        if (isset($filepath)) {
             return (bool) file_put_contents($filepath, $result);
         }
 
@@ -844,15 +765,11 @@ class SimpleDOM extends SimpleXMLElement
      * @param	bool	$use_xslcache	If TRUE, use the XSL Cache extension if available
      * @return	string					Result
      */
-    public function XSLT($filepath, $use_xslcache = true)
-    {
-        if($use_xslcache && extension_loaded('xslcache'))
-        {
+    public function XSLT($filepath, $use_xslcache = true) {
+        if ($use_xslcache && extension_loaded('xslcache')) {
             $xslt = new XSLTCache;
             $xslt->importStylesheet($filepath);
-        }
-        else
-        {
+        } else {
             $xsl = new DOMDocument;
             $xsl->load($filepath);
 
@@ -880,10 +797,9 @@ class SimpleDOM extends SimpleXMLElement
      * @param	string	$xpath		XPath expression
      * @return	void
      */
-    public function sortedXPath($xpath)
-    {
-        $nodes   = $this->xpath($xpath);
-        $args    = func_get_args();
+    public function sortedXPath($xpath) {
+        $nodes = $this->xpath($xpath);
+        $args = func_get_args();
         $args[0] = & $nodes;
 
         call_user_func_array(array(get_class($this), 'sort'), $args);
@@ -897,20 +813,18 @@ class SimpleDOM extends SimpleXMLElement
      * ATTENTION: text nodes are not supported. If current node has text nodes, they may be lost in
      * the process
      *
-     * @return	SimpleDOM		This node
+     * @return static		This node
      */
-    public function sortChildren()
-    {
+    public function sortChildren() {
         $nodes = $this->removeNodes('*');
-        $args  = func_get_args();
+        $args = func_get_args();
 
         array_unshift($args, null);
         $args[0] = & $nodes;
 
         call_user_func_array(array(get_class($this), 'sort'), $args);
 
-        foreach($nodes as $node)
-        {
+        foreach ($nodes as $node) {
             $this->appendChild($node);
         }
 
@@ -927,59 +841,42 @@ class SimpleDOM extends SimpleXMLElement
      * @param	array	&$nodes		Array of SimpleXMLElement
      * @return	void
      */
-    static public function sort(array &$nodes)
-    {
+    static public function sort(array &$nodes) {
         $args = func_get_args();
         unset($args[0]);
 
         $sort = array();
-        $tmp  = array();
+        $tmp = array();
 
-        foreach($args as $k => $arg)
-        {
-            if(is_string($arg))
-            {
+        foreach ($args as $k => $arg) {
+            if (is_string($arg)) {
                 $tmp[$k] = array();
 
-                if(preg_match('#^@?[a-z_0-9]+$#Di', $arg))
-                {
-                    if($arg[0] === '@')
-                    {
+                if (preg_match('#^@?[a-z_0-9]+$#Di', $arg)) {
+                    if ($arg[0] === '@') {
                         $name = substr($arg, 1);
-                        foreach($nodes as $node)
-                        {
+                        foreach ($nodes as $node) {
                             $tmp[$k][] = (string) $node[$name];
                         }
-                    }
-                    else
-                    {
-                        foreach($nodes as $node)
-                        {
+                    } else {
+                        foreach ($nodes as $node) {
                             $tmp[$k][] = (string) $node->$arg;
                         }
                     }
-                }
-                elseif(preg_match('#^current\\(\\)|text\\(\\)|\\.$#i', $arg))
-                {
+                } elseif (preg_match('#^current\\(\\)|text\\(\\)|\\.$#i', $arg)) {
                     /**
                      * If the XPath is current() or text() or . we use this node's textContent
                      */
-                    foreach($nodes as $node)
-                    {
+                    foreach ($nodes as $node) {
                         $tmp[$k][] = dom_import_simplexml($node)->textContent;
                     }
-                }
-                else
-                {
-                    foreach($nodes as $node)
-                    {
-                        $_nodes    = $node->xpath($arg);
+                } else {
+                    foreach ($nodes as $node) {
+                        $_nodes = $node->xpath($arg);
                         $tmp[$k][] = (empty($_nodes)) ? '' : (string) $_nodes[0];
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $tmp[$k] = $arg;
             }
 
@@ -1001,50 +898,41 @@ class SimpleDOM extends SimpleXMLElement
     /*     * #@+
      * @ignore
      */
-    protected function _xpath($xpath)
-    {
+    protected function _xpath($xpath) {
         $use_errors = libxml_use_internal_errors(true);
 
         $nodes = $this->xpath($xpath);
 
         libxml_use_internal_errors($use_errors);
 
-        if($nodes === false)
-        {
+        if ($nodes === false) {
             throw new InvalidArgumentException('Invalid XPath expression ' . $xpath);
         }
 
         return $nodes;
     }
 
-    protected function insert($type, $content, $mode)
-    {
-        $tmp    = dom_import_simplexml($this);
+    protected function insert($type, $content, $mode) {
+        $tmp = dom_import_simplexml($this);
         $method = 'create' . $type;
 
         $node = $tmp->ownerDocument->$method($content);
         return $this->insertNode($tmp, $node, $mode);
     }
 
-    protected function insertNode(DOMNode $tmp, DOMNode $node, $mode)
-    {
-        if($mode === 'before' || $mode === 'after')
-        {
-            if($node instanceof DOMText || $node instanceof DOMElement || $node instanceof DOMDocumentFragment)
-            {
-                if($tmp->isSameNode($tmp->ownerDocument->documentElement))
-                {
+    protected function insertNode(DOMNode $tmp, DOMNode $node, $mode) {
+        if ($mode === 'before' || $mode === 'after') {
+            if ($node instanceof DOMText || $node instanceof DOMElement || $node instanceof DOMDocumentFragment) {
+                if ($tmp->isSameNode($tmp->ownerDocument->documentElement)) {
                     throw new BadMethodCallException('Cannot insert a ' . get_class($node) . ' node outside of the root node');
                 }
             }
 
-            if($mode === 'before')
-            {
+            if ($mode === 'before') {
                 return $tmp->parentNode->insertBefore($node, $tmp);
             }
 
-            if($tmp->nextSibling)
-            {
+            if ($tmp->nextSibling) {
                 return $tmp->parentNode->insertBefore($node, $tmp->nextSibling);
             }
 
@@ -1058,8 +946,7 @@ class SimpleDOM extends SimpleXMLElement
      * NOTE: in order to support LSB, __CLASS__ would need to be replaced by get_called_class() and
      * 		this method would need to be invoked via static:: instead of static::
      */
-    static protected function fromHTML($method, $arg, &$errors)
-    {
+    static protected function fromHTML($method, $arg, &$errors) {
         $old = libxml_use_internal_errors(true);
         $cnt = count(libxml_get_errors());
 
@@ -1073,5 +960,4 @@ class SimpleDOM extends SimpleXMLElement
     }
 
     /*     * #@- */
-
 }
