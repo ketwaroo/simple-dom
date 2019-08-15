@@ -87,7 +87,7 @@ class SimpleDOM extends SimpleXMLElement
      */
     static public function loadHTML($source, &$errors = null)
     {
-        return self::fromHTML('loadHTML', $source, $errors);
+        return static::fromHTML('loadHTML', $source, $errors);
     }
 
     /**
@@ -100,7 +100,7 @@ class SimpleDOM extends SimpleXMLElement
      */
     static public function loadHTMLFile($filename, &$errors = null)
     {
-        return self::fromHTML('loadHTMLFile', $filename, $errors);
+        return static::fromHTML('loadHTMLFile', $filename, $errors);
     }
 
     //=================================
@@ -1056,7 +1056,7 @@ class SimpleDOM extends SimpleXMLElement
 
     /**
      * NOTE: in order to support LSB, __CLASS__ would need to be replaced by get_called_class() and
-     * 		this method would need to be invoked via static:: instead of self::
+     * 		this method would need to be invoked via static:: instead of static::
      */
     static protected function fromHTML($method, $arg, &$errors)
     {
