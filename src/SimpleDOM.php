@@ -943,7 +943,7 @@ class SimpleDOM extends SimpleXMLElement {
     }
 
     /**
-     * NOTE: in order to support LSB, __CLASS__ would need to be replaced by get_called_class() and
+     * NOTE: in order to support LSB, get_called_class() would need to be replaced by get_called_class() and
      * 		this method would need to be invoked via static:: instead of static::
      */
     static protected function fromHTML($method, $arg, &$errors) {
@@ -956,7 +956,7 @@ class SimpleDOM extends SimpleXMLElement {
         $errors = array_slice(libxml_get_errors(), $cnt);
         libxml_use_internal_errors($old);
 
-        return simplexml_import_dom($dom, __CLASS__);
+        return simplexml_import_dom($dom, get_called_class());
     }
 
     /*     * #@- */
